@@ -23,6 +23,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
 
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }} # Uses the exact tag that triggered the workflow
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install build tools
         run: python -m pip install build --user
