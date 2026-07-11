@@ -1,9 +1,8 @@
 name: Publish to PyPI
 
 on:
-  push:
-    tags:
-      - 'v*' # Triggers whenever a tag starting with 'v' is pushed (e.g., v1.0.0)
+  release:
+    types: [published] # Triggers precisely when you click "Publish release" on github.com
 
 jobs:
   build-n-publish:
@@ -11,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org
+      url: https://pypi.org # Optional: Swap with your package URL
     permissions:
       id-token: write # CRITICAL: Required for OIDC trusted publishing authentication
-      contents: read  # Required to checkout repository code
+      contents: write # Required to allow uploading asset files back to your web release
 
     steps:
       - name: Checkout code
@@ -22,20 +21,21 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v5
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }} # Uses the exact tag that triggered the workflow
-          files: dist/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          python-version: '3.11'
 
       - name: Install build tools
         run: python -m pip install build --user
 
       - name: Build binary wheel and source tarball
-        run: python -m build
+        run: python -m build # This creates the dist/ folder first!
+
+      - name: Upload binaries to the existing GitHub Release webpage
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/* # Safely attaches your .whl and .tar.gz files to your web release page
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish package distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
