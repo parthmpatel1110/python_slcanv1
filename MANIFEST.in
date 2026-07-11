@@ -1,0 +1,3 @@
+include slcanv1/slcanv1.dll
+include README.md
+include LICENSE
