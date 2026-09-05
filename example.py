@@ -180,6 +180,8 @@ def test_v2_functions():
         f =slcan.receive_packet(1,port)
         if(f != None):
             print(f"Received Frame! ID: {hex(f.id)} DLC: {f.dlc}, ",i)
+            if(f.error):
+                print(f"error Frame! ID: {hex(f.error)} DLC: {f.error_msg}, ",i)
             i = i + 1
         pass
     # Stop and clear callback

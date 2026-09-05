@@ -12,11 +12,16 @@ else:
 
 _dll = ctypes.CDLL(_dll_path)
 
-_dll2_path = os.path.join(os.path.dirname(__file__), "slcanv2.dll")
+if is_64bit_python():
+    _dll2_path = os.path.join(os.path.dirname(__file__), "slcanv2_64bit.dll")
+else:
+    _dll2_path = os.path.join(os.path.dirname(__file__), "slcanv2_32bit.dll")
+
 try:
     _dll2 = ctypes.CDLL(_dll2_path)
 except Exception:
     _dll2 = None
+    
 
 slcanv1hnd = ctypes.c_void_p
 PortNameType = ctypes.c_char * 40
@@ -460,9 +465,9 @@ class SlcanV2:
         hnd = self._get_hnd(port_name)
         packet = PacketFD()
         rc = slcanv2_receive_packet(hnd, ctypes.byref(packet), timeout_ms)
-        if rc == 1:
-            return packet
-        return None
+        # if rc == 1:
+        return packet
+        
 
     def set_rx_callback(self, callback, port_name=None):
         if not slcanv2_set_rx_callback: raise RuntimeError("V2 function not available")
