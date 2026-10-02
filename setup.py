@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DynoSure-slcanv1',
-    version='0.4.7',
+    version='0.4.8',
     packages=find_packages(),
     include_package_data=True,
     package_data={'slcanv1': ['*.dll']},
